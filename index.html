@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HireIQ &#8211; Intelligent Screening Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-wrap">
+        <div class="logo-mark">
+          <svg width="32" height="38" viewBox="0 0 32 38" fill="none">
+            <defs>
+              <linearGradient id="boltGrad" x1="16" y1="0" x2="16" y2="38" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#ff9a3c"/>
+                <stop offset="100%" stop-color="#ff4e50"/>
+              </linearGradient>
+            </defs>
+            <polygon points="18,0 4,22 14,22 12,38 28,14 18,14" fill="url(#boltGrad)"/>
+          </svg>
+        </div>
+        <div class="logo-text-wrap">
+          <div class="logo-text">
+            <span class="logo-hire">Hire</span><span class="logo-iq">IQ</span>
+          </div>
+          <div class="logo-sub">AI Hiring Intelligence Platform</div>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <span class="nav-pill">&#10022; Neural AI</span>
+        <span class="nav-pill">Zero Login</span>
+        <span class="nav-pill">Privacy First</span>
+        <span class="nav-pill accent">Open Source</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===== INPUT SCREEN ===== -->
+    <div id="inputScreen">
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-eyebrow">
+          <span class="eyebrow-dot"></span>
+          Powered by Groq AI &middot; Free Forever
+          <span class="eyebrow-dot"></span>
+        </div>
+        <h1 class="hero-h1">
+          <span class="h1-line1">Screen Smarter.</span>
+          <span class="h1-line2">Hire Better.</span>
+        </h1>
+        <p class="hero-p">Paste your JD, upload resumes &mdash; get AI-ranked candidates, bias-checked job descriptions, and a ready-to-share hiring report. All free, all in your browser.</p>
+        <div class="hero-stats">
+          <div class="hstat"><span class="hstat-n">2-Way</span><span class="hstat-l">Analysis</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">Bias</span><span class="hstat-l">Detection</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">CSV</span><span class="hstat-l">Export</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">Free</span><span class="hstat-l">Forever</span></div>
+        </div>
+      </section>
+
+      <!-- FORM -->
+      <div class="form-wrap">
+
+        <!-- JD -->
+        <div class="form-block">
+          <div class="form-block-label">
+            <span class="fbl-num">01</span>
+            <span class="fbl-title">Job Description</span>
+            <span class="fbl-count" id="jdWordCount">0 words</span>
+            <label class="jd-upload-btn" title="Upload JD as PDF, DOCX or TXT">
+              &#8593; Upload JD
+              <input type="file" id="jdFileInput" accept=".pdf,.doc,.docx,.txt" hidden/>
+            </label>
+          </div>
+          <div class="textarea-wrap">
+            <textarea id="jdInput" class="ftextarea" placeholder="Paste the full Job Description here...&#10;&#10;Or upload a PDF / DOCX using the button above. The AI will analyze its quality, detect bias, extract requirements, and score every candidate against it."></textarea>
+            <div class="textarea-glow"></div>
+          </div>
+        </div>
+
+        <!-- RESUMES -->
+        <div class="form-block">
+          <div class="form-block-label">
+            <span class="fbl-num">02</span>
+            <span class="fbl-title">Candidate Resumes</span>
+            <span class="fbl-badge" id="candidatePill">0 added</span>
+          </div>
+
+          <div class="dropzone" id="dropzone">
+            <div class="dz-content">
+              <div class="dz-icon-wrap">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                </svg>
+              </div>
+              <div class="dz-title">Drop resume files here</div>
+              <div class="dz-sub">.pdf &middot; .docx &middot; .txt &mdash; one file per candidate</div>
+              <label class="dz-browse">
+                Browse Files
+                <input type="file" id="fileInput" multiple accept=".txt,.text,.pdf,.doc,.docx" hidden/>
+              </label>
+            </div>
+          </div>
+
+          <div id="candidateList"></div>
+          <button class="add-manual" onclick="addManual()">+ Add Manually</button>
+        </div>
+
+        <!-- CTA -->
+        <button class="cta-btn" onclick="startAnalysis()">
+          <span class="cta-icon">&#9889;</span>
+          <span class="cta-text">Start Screening</span>
+          <span class="cta-sub">AI analysis &middot; ~15 seconds</span>
+          <div class="cta-shine"></div>
+        </button>
+        <button class="demo-btn" onclick="loadDemo()">Load demo data &#8594;</button>
+
+      </div>
+    </div>
+
+    <!-- ===== RESULTS SCREEN ===== -->
+    <div id="resultsScreen" class="hidden">
+
+      <div class="results-topbar">
+        <div class="results-topbar-left">
+          <button class="back-btn" onclick="goBack()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            New Analysis
+          </button>
+          <div class="results-heading">
+            <div class="results-title">Hiring Intelligence Report</div>
+            <div class="results-meta" id="resultsMeta"></div>
+          </div>
+        </div>
+        <div class="results-actions">
+          <button class="act-btn green" onclick="exportCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export CSV
+          </button>
+          <button class="act-btn purple" onclick="window.print()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+            Print / PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="statsGrid"></div>
+      <div id="jdQualityPanel"></div>
+
+      <div class="section-head">
+        <div class="section-title">Candidate Rankings</div>
+        <div class="filter-row" id="filterRow">
+          <button class="filt active" onclick="filterBy('all',this)">All</button>
+          <button class="filt" onclick="filterBy('Strong Fit',this)">Strong Fit</button>
+          <button class="filt" onclick="filterBy('Moderate Fit',this)">Moderate Fit</button>
+          <button class="filt" onclick="filterBy('Not Fit',this)">Not Fit</button>
+        </div>
+      </div>
+      <div class="rankings-wrap" id="rankingsWrap"></div>
+
+      <div class="section-title" style="margin:2.5rem 0 1rem">Detailed Analysis</div>
+      <div class="detail-grid" id="detailGrid"></div>
+
+      <div class="rec-panel" id="recPanel"></div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">Hire<span>IQ</span></div>
+      <div class="footer-text">Intelligent Screening Engine &middot; Neural AI &middot; Open Source &middot; Privacy First</div>
+    </div>
+  </footer>
+
+  <div class="loading-screen hidden" id="loadingScreen">
+    <div class="ls-inner">
+      <div class="ls-logo">Hire<span>IQ</span></div>
+      <div class="ls-progress"><div class="ls-bar" id="lsBar"></div></div>
+      <div class="ls-step" id="lsStep">Initializing...</div>
+      <div class="ls-detail" id="lsDetail">Connecting to AI engine</div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- PDF.js for PDF parsing -->
+  <script>
+    (function(){
+      var s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload=function(){ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; window.pdfReady=true; };
+      document.head.appendChild(s);
+    })();
+  </script>
+  <!-- Mammoth.js for DOCX parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="app.js?v=4"></script>
+</body>
+</html>
