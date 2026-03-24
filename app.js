@@ -1,5 +1,5 @@
-Ôªø// ===== HireIQ ‚Äî Intelligent Screening Engine =====
-// Powered by Groq AI ‚Äî replace placeholder with key from console.groq.com (free)
+// ===== HireIQ ó Intelligent Screening Engine =====
+// Powered by Groq AI ó replace placeholder with key from console.groq.com (free)
 
 const GROQ_KEY = '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';
 const GROQ_MODELS = ['llama-3.1-8b-instant', 'llama3-8b-8192', 'gemma2-9b-it'];
@@ -205,7 +205,7 @@ function handleFiles(files) {
 async function extractPDFText(file, name) {
   try {
     if (!window.pdfReady || typeof pdfjsLib === 'undefined') {
-      showToast('PDF.js loading ‚Äî try again in a moment');
+      showToast('PDF.js loading ó try again in a moment');
       addCandidate(name, '', 'file'); return;
     }
     const buf = await file.arrayBuffer();
@@ -216,11 +216,11 @@ async function extractPDFText(file, name) {
       const content = await page.getTextContent();
       text += content.items.map(item => item.str).join(' ') + '\n';
     }
-    if (!text.trim()) { showToast('Scanned PDF ‚Äî paste text manually'); addCandidate(name, '', 'file'); return; }
+    if (!text.trim()) { showToast('Scanned PDF ó paste text manually'); addCandidate(name, '', 'file'); return; }
     addCandidate(name, text.trim(), 'file');
     showToast('Extracted: ' + file.name);
   } catch (err) {
-    showToast('Could not read ' + file.name + ' ‚Äî paste text manually');
+    showToast('Could not read ' + file.name + ' ó paste text manually');
     addCandidate(name, '', 'file');
   }
 }
@@ -244,12 +244,12 @@ function renderEntry(idx) {
   const div = document.createElement('div');
   div.className = 'cand-entry';
   div.dataset.idx = idx;
-  const ico = c.source === 'file' ? 'üìÑ' : '‚úèÔ∏è';
+  const ico = c.source === 'file' ? '??' : '??';
   div.innerHTML =
     '<div class="ce-row">' +
       '<div class="ce-ico">' + ico + '</div>' +
       '<input class="ce-name" type="text" value="' + escHtml(c.name) + '" placeholder="Candidate name" oninput="candidates[' + idx + '].name = this.value"/>' +
-      '<button class="ce-del" onclick="removeCandidate(' + idx + ')">‚úï Remove</button>' +
+      '<button class="ce-del" onclick="removeCandidate(' + idx + ')">? Remove</button>' +
     '</div>' +
     '<textarea class="ce-ta" placeholder="Paste resume text here..." oninput="candidates[' + idx + '].text = this.value">' + escHtml(c.text) + '</textarea>';
   list.appendChild(div);
@@ -273,7 +273,7 @@ function escHtml(str) {
 
 // ===== GROQ API =====
 // Deployed on Vercel: calls /api/analyze (key hidden server-side)
-// Local dev: calls Groq directly ‚Äî replace GROQ_KEY above with your key
+// Local dev: calls Groq directly ó replace GROQ_KEY above with your key
 async function callGroq(prompt) {
   const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (!isLocal) {
@@ -374,7 +374,7 @@ async function scoreCandidate(jd, candidate) {
 }
 
 async function generateRecommendation(jd, scored) {
-  const summary = scored.map((c, i) => (i + 1) + '. ' + c.name + ' ‚Äî Score: ' + c.score + ', ' + c.recommendation).join('\n');
+  const summary = scored.map((c, i) => (i + 1) + '. ' + c.name + ' ó Score: ' + c.score + ', ' + c.recommendation).join('\n');
   const prompt = 'You are a Chief People Officer. Write a hiring recommendation.\n\nJD Summary: ' + jd.substring(0, 300) + '...\n\nResults:\n' + summary + '\n\nReturn ONLY valid JSON:\n{\n  "shortlist": ["name1", "name2"],\n  "recommendation": "3-4 sentence executive summary with specific hiring recommendation and interview priorities"\n}';
   return parseJSON(await callGroq(prompt));
 }
@@ -389,7 +389,7 @@ function renderResults() {
   document.getElementById('resultsScreen').classList.remove('hidden');
 
   const now = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-  document.getElementById('resultsMeta').textContent = res.length + ' candidates screened ¬∑ ' + now + ' ¬∑ HireIQ Intelligent Screening';
+  document.getElementById('resultsMeta').textContent = res.length + ' candidates screened ∑ ' + now + ' ∑ HireIQ Intelligent Screening';
 
   renderStats(res);
   renderJDPanel(jdResult);
@@ -398,7 +398,7 @@ function renderResults() {
   renderRecommendation(recommendation, res);
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  showToast('Analysis complete ‚Äî ' + res.length + ' candidates ranked');
+  showToast('Analysis complete ó ' + res.length + ' candidates ranked');
 }
 
 function scoreColor(s) {
@@ -431,8 +431,8 @@ function renderJDPanel(jd) {
   const circ = 2 * Math.PI * r;
   const offset = circ - (jd.score / 100) * circ;
   const color = scoreColor(jd.score);
-  const flags = (jd.flags || []).map(f => '<span class="chip chip-r">‚ö† ' + f + '</span>').join('');
-  const positives = (jd.positives || []).map(p => '<span class="chip chip-g">‚úì ' + p + '</span>').join('');
+  const flags = (jd.flags || []).map(f => '<span class="chip chip-r">? ' + f + '</span>').join('');
+  const positives = (jd.positives || []).map(p => '<span class="chip chip-g">? ' + p + '</span>').join('');
   document.getElementById('jdQualityPanel').innerHTML =
     '<div class="jd-card">' +
       '<div class="jd-card-top">' +
@@ -504,9 +504,9 @@ function renderDetailCards(res) {
 
 function renderRecommendation(rec, res) {
   const shortlist = rec.shortlist || res.filter(r => r.recommendation === 'Strong Fit').map(r => r.name);
-  const chips = shortlist.map(n => '<span class="shortlist-chip">‚úì ' + escHtml(n) + '</span>').join('');
+  const chips = shortlist.map(n => '<span class="shortlist-chip">? ' + escHtml(n) + '</span>').join('');
   document.getElementById('recPanel').innerHTML =
-    '<div class="rec-panel-title">üéØ Hiring Recommendation</div>' +
+    '<div class="rec-panel-title">?? Hiring Recommendation</div>' +
     '<div class="rec-panel-body">' + rec.recommendation + '</div>' +
     '<div class="shortlist-row"><span class="shortlist-lbl">Shortlist:</span>' + chips + '</div>';
 }
@@ -576,13 +576,13 @@ function showToast(msg) {
 }
 
 // ===== DEMO DATA =====
-const DEMO_JD = 'Growth Marketing Intern ‚Äî Founders Office\n\nWe are looking for a high-agency Growth Marketing Intern to join our Founders Office at a fast-growing fintech startup.\n\nResponsibilities:\n- Own acquisition, activation, and retention experiments end-to-end\n- Run A/B tests across landing pages, onboarding flows, and email campaigns\n- Build and maintain KPI dashboards tracking CAC, LTV, and ROMI\n- Conduct cohort analysis to identify churn drivers and retention opportunities\n\nRequirements:\n- 1-2 years of experience in growth marketing or operations\n- Strong analytical skills ‚Äî proficient in SQL, Google Sheets, or Excel\n- Experience with funnel analysis, A/B testing, and cohort analysis\n- Familiarity with tools like Google Analytics, Mixpanel, or Amplitude\n\nCompensation: Rs 30,000 - 60,000/month based on experience';
+const DEMO_JD = 'Growth Marketing Intern ó Founders Office\n\nWe are looking for a high-agency Growth Marketing Intern to join our Founders Office at a fast-growing fintech startup.\n\nResponsibilities:\n- Own acquisition, activation, and retention experiments end-to-end\n- Run A/B tests across landing pages, onboarding flows, and email campaigns\n- Build and maintain KPI dashboards tracking CAC, LTV, and ROMI\n- Conduct cohort analysis to identify churn drivers and retention opportunities\n\nRequirements:\n- 1-2 years of experience in growth marketing or operations\n- Strong analytical skills ó proficient in SQL, Google Sheets, or Excel\n- Experience with funnel analysis, A/B testing, and cohort analysis\n- Familiarity with tools like Google Analytics, Mixpanel, or Amplitude\n\nCompensation: Rs 30,000 - 60,000/month based on experience';
 
 const DEMO_RESUMES = [
-  { name: 'Priya Sharma', text: 'Growth Marketing Analyst | 2 years\n\nGroww (Jan 2023‚ÄìPresent)\n- Ran 40+ A/B tests on onboarding flows, improving activation by 23%\n- Built cohort dashboards in SQL tracking CAC, LTV, ROMI\n- Reduced churn by 18% through retention campaigns\n\nSkills: SQL, Google Analytics, Mixpanel, Excel, A/B Testing, Cohort Analysis' },
-  { name: 'Arjun Mehta', text: 'Software Developer | 1.5 years\n\nTCS (Aug 2023‚ÄìPresent)\n- Built REST APIs using Node.js\n- Maintained MySQL databases\n\nSkills: JavaScript, React, Node.js, SQL, Git\nEducation: B.Tech CS, VIT 2023' },
-  { name: 'Sneha Kapoor', text: 'Operations & Growth | Startup Experience\n\nUnacademy (Oct 2023‚ÄìJan 2024)\n- 15% conversion lift through funnel optimization and A/B testing\n- Built CAC, LTV, ROMI data models\n- Improved retention 12% through cohort analysis\n\nSkills: Google Analytics, Excel, Cohort Analysis, Funnel Analysis, A/B Testing, SQL' },
-  { name: 'Ananya Singh', text: 'Product & Growth Analyst | 2 years\n\nRazorpay (Mar 2023‚ÄìPresent)\n- Improved D7 merchant activation by 31%\n- 25+ experiments via Optimizely\n- Amplitude dashboards for retention cohorts\n- Referral program drove 8% new signups\n\nSkills: SQL, Amplitude, Mixpanel, Google Analytics, Python, A/B Testing' }
+  { name: 'Priya Sharma', text: 'Growth Marketing Analyst | 2 years\n\nGroww (Jan 2023ñPresent)\n- Ran 40+ A/B tests on onboarding flows, improving activation by 23%\n- Built cohort dashboards in SQL tracking CAC, LTV, ROMI\n- Reduced churn by 18% through retention campaigns\n\nSkills: SQL, Google Analytics, Mixpanel, Excel, A/B Testing, Cohort Analysis' },
+  { name: 'Arjun Mehta', text: 'Software Developer | 1.5 years\n\nTCS (Aug 2023ñPresent)\n- Built REST APIs using Node.js\n- Maintained MySQL databases\n\nSkills: JavaScript, React, Node.js, SQL, Git\nEducation: B.Tech CS, VIT 2023' },
+  { name: 'Sneha Kapoor', text: 'Operations & Growth | Startup Experience\n\nUnacademy (Oct 2023ñJan 2024)\n- 15% conversion lift through funnel optimization and A/B testing\n- Built CAC, LTV, ROMI data models\n- Improved retention 12% through cohort analysis\n\nSkills: Google Analytics, Excel, Cohort Analysis, Funnel Analysis, A/B Testing, SQL' },
+  { name: 'Ananya Singh', text: 'Product & Growth Analyst | 2 years\n\nRazorpay (Mar 2023ñPresent)\n- Improved D7 merchant activation by 31%\n- 25+ experiments via Optimizely\n- Amplitude dashboards for retention cohorts\n- Referral program drove 8% new signups\n\nSkills: SQL, Amplitude, Mixpanel, Google Analytics, Python, A/B Testing' }
 ];
 
 function loadDemo() {
@@ -592,5 +592,5 @@ function loadDemo() {
   const words = DEMO_JD.split(/\s+/).filter(Boolean).length;
   document.getElementById('jdWordCount').textContent = words + ' words';
   DEMO_RESUMES.forEach(r => addCandidate(r.name, r.text, 'demo'));
-  showToast('Demo loaded ‚Äî click Start Screening');
+  showToast('Demo loaded ó click Start Screening');
 }
